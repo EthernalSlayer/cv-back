@@ -1,6 +1,6 @@
 require('dotenv').config();
-require('./config/db')();
 const express = require('express');
+require('./config/db')();
 const mongoSanitize = require('express-mongo-sanitize');
 const cors = require('cors');
 const xss = require('xss-clean');
@@ -17,6 +17,12 @@ app.use(mongoSanitize());
 app.use(xss());
 app.use(hpp());
 app.use(express.static('images'));
+
+// import routers
+const skills = require('./routes/skills');
+
+// routes
+app.use('/skills', skills);
 
 app.listen(PORT, function (err) {
 	if (err) {
