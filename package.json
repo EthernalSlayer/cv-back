@@ -11,9 +11,12 @@
   "author": "EthernalSlayer",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^9.0.2",
     "express": "^4.17.1",
     "express-mongo-sanitize": "^2.1.0",
-    "mongoose": "^5.12.10"
+    "hpp": "^0.2.3",
+    "mongoose": "^5.12.10",
+    "xss-clean": "^0.1.1"
   }
 }
