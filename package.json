@@ -15,6 +15,7 @@
     "dotenv": "^9.0.2",
     "express": "^4.17.1",
     "express-mongo-sanitize": "^2.1.0",
+    "express-validator": "^6.11.1",
     "hpp": "^0.2.3",
     "mongoose": "^5.12.10",
     "sha1": "^1.1.1",

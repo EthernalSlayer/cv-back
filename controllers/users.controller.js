@@ -5,6 +5,7 @@ const createSuccess = require('../utils/success/createSuccess');
 const deleteSuccess = require('../utils/success/deleteSuccess');
 const updateSuccess = require('../utils/success/updateSuccess');
 const type = 'user';
+const { validationResult } = require('express-validator');
 
 class UsersController {
 	static getUsers(req, res) {
@@ -18,6 +19,10 @@ class UsersController {
 	}
 
 	static postUser(req, res) {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json({ errors: errors.array() });
+		}
 		if (req.body.password) {
 			const password = sha1(req.body.password);
 			req.body.password = password;
@@ -43,6 +48,10 @@ class UsersController {
 	}
 
 	static updateUser(req, res) {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json({ errors: errors.array() });
+		}
 		const id = req.params.id;
 		if (req.body.password) {
 			const password = sha1(req.body.password);
