@@ -1,4 +1,4 @@
-const Project = require('../models/projects.models');
+const Project = require('../models/projects.model');
 
 class ProjectsController {
 	static getProjects(req, res) {
