@@ -4,6 +4,8 @@ const SkillsController = require('../controllers/skills.controller');
 
 router
 	.get('/', SkillsController.getSkills)
-	.post('/', SkillsController.postSkills);
+	.post('/', SkillsController.postSkill)
+	.delete('/:id', SkillsController.deleteSkill)
+	.put('/:id', SkillsController.updateSkill);
 
 module.exports = router;
