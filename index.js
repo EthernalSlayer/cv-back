@@ -21,10 +21,12 @@ app.use(express.static('images'));
 // import routers
 const skills = require('./routes/skills');
 const projects = require('./routes/projects');
+const users = require('./routes/users');
 
 // routes
 app.use('/skills', skills);
 app.use('/projects', projects);
+app.use('/users', users);
 
 app.listen(PORT, function (err) {
 	if (err) {
