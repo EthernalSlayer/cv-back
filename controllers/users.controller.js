@@ -4,8 +4,8 @@ const mongoError = require('../utils/error/mongoError');
 const createSuccess = require('../utils/success/createSuccess');
 const deleteSuccess = require('../utils/success/deleteSuccess');
 const updateSuccess = require('../utils/success/updateSuccess');
+const validatorResponse = require('../utils/validator/validatorResponse');
 const type = 'user';
-const { validationResult } = require('express-validator');
 
 class UsersController {
 	static getUsers(req, res) {
@@ -19,20 +19,18 @@ class UsersController {
 	}
 
 	static postUser(req, res) {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(400).json({ errors: errors.array() });
-		}
-		if (req.body.password) {
-			const password = sha1(req.body.password);
-			req.body.password = password;
-		}
-		User.create({ ...req.body }, (err) => {
-			if (err) {
-				mongoError(res, err);
-			} else {
-				createSuccess(res, type);
+		validatorResponse(req, res, () => {
+			if (req.body.password) {
+				const password = sha1(req.body.password);
+				req.body.password = password;
 			}
+			User.create({ ...req.body }, (err) => {
+				if (err) {
+					mongoError(res, err);
+				} else {
+					createSuccess(res, type);
+				}
+			});
 		});
 	}
 
@@ -48,22 +46,20 @@ class UsersController {
 	}
 
 	static updateUser(req, res) {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(400).json({ errors: errors.array() });
-		}
-		const id = req.params.id;
-		if (req.body.password) {
-			const password = sha1(req.body.password);
-			req.body.password = password;
-		}
-		const update = { ...req.body };
-		User.findByIdAndUpdate(id, update, (err) => {
-			if (err) {
-				mongoError(res, err);
-			} else {
-				updateSuccess(res, type, id);
+		validatorResponse(req, res, () => {
+			const id = req.params.id;
+			if (req.body.password) {
+				const password = sha1(req.body.password);
+				req.body.password = password;
 			}
+			const update = { ...req.body };
+			User.findByIdAndUpdate(id, update, (err) => {
+				if (err) {
+					mongoError(res, err);
+				} else {
+					updateSuccess(res, type, id);
+				}
+			});
 		});
 	}
 }

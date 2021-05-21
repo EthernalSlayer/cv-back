@@ -3,8 +3,8 @@ const mongoError = require('../utils/error/mongoError');
 const createSuccess = require('../utils/success/createSuccess');
 const deleteSuccess = require('../utils/success/deleteSuccess');
 const updateSuccess = require('../utils/success/updateSuccess');
+const validatorResponse = require('../utils/validator/validatorResponse');
 const type = 'project';
-const { validationResult } = require('express-validator');
 
 class ProjectsController {
 	static getProjects(req, res) {
@@ -18,16 +18,14 @@ class ProjectsController {
 	}
 
 	static postProject(req, res) {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(400).json({ errors: errors.array() });
-		}
-		Project.create({ ...req.body }, (err) => {
-			if (err) {
-				mongoError(res, err);
-			} else {
-				createSuccess(res, type);
-			}
+		validatorResponse(req, res, () => {
+			Project.create({ ...req.body }, (err) => {
+				if (err) {
+					mongoError(res, err);
+				} else {
+					createSuccess(res, type);
+				}
+			});
 		});
 	}
 
@@ -43,18 +41,16 @@ class ProjectsController {
 	}
 
 	static updateProject(req, res) {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(400).json({ errors: errors.array() });
-		}
-		const id = req.params.id;
-		const update = { ...req.body };
-		Project.findByIdAndUpdate(id, update, (err) => {
-			if (err) {
-				mongoError(res, err);
-			} else {
-				updateSuccess(res, type, id);
-			}
+		validatorResponse(req, res, () => {
+			const id = req.params.id;
+			const update = { ...req.body };
+			Project.findByIdAndUpdate(id, update, (err) => {
+				if (err) {
+					mongoError(res, err);
+				} else {
+					updateSuccess(res, type, id);
+				}
+			});
 		});
 	}
 }
