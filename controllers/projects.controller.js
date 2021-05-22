@@ -1,10 +1,16 @@
-const Project = require('../models/projects.models');
+const Project = require('../models/projects.model');
+const mongoError = require('../utils/error/mongoError');
+const createSuccess = require('../utils/success/createSuccess');
+const deleteSuccess = require('../utils/success/deleteSuccess');
+const updateSuccess = require('../utils/success/updateSuccess');
+const validatorResponse = require('../utils/validator/validatorResponse');
+const type = 'project';
 
 class ProjectsController {
 	static getProjects(req, res) {
 		Project.find((err, results) => {
 			if (err) {
-				res.status(500).json({ error: err.message });
+				mongoError(res, err);
 			} else {
 				res.status(200).json(results);
 			}
@@ -12,12 +18,14 @@ class ProjectsController {
 	}
 
 	static postProject(req, res) {
-		Project.create({ ...req.body }, (err) => {
-			if (err) {
-				res.status(500).json({ error: err.message });
-			} else {
-				res.status(201).json({ message: 'success' });
-			}
+		validatorResponse(req, res, () => {
+			Project.create({ ...req.body }, (err) => {
+				if (err) {
+					mongoError(res, err);
+				} else {
+					createSuccess(res, type);
+				}
+			});
 		});
 	}
 
@@ -25,10 +33,24 @@ class ProjectsController {
 		const id = req.params.id;
 		Project.findByIdAndDelete(id, (err) => {
 			if (err) {
-				res.status(500).json({ error: err.message });
+				mongoError(res, err);
 			} else {
-				res.status(200).json({ message: 'deleted' });
+				deleteSuccess(res, type, id);
 			}
+		});
+	}
+
+	static updateProject(req, res) {
+		validatorResponse(req, res, () => {
+			const id = req.params.id;
+			const update = { ...req.body };
+			Project.findByIdAndUpdate(id, update, (err) => {
+				if (err) {
+					mongoError(res, err);
+				} else {
+					updateSuccess(res, type, id);
+				}
+			});
 		});
 	}
 }
