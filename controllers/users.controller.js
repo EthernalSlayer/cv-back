@@ -64,27 +64,21 @@ class UsersController {
 	}
 
 	static login(req, res) {
-		if (!req.body.pseudo || !req.body.password) {
-			res.sendStatus(400);
-		} else {
+		validatorResponse(req, res, () => {
 			const pseudo = req.body.pseudo;
 			const hashpass = sha1(req.body.password);
 			User.findOne({ pseudo }, (err, results) => {
 				if (err) {
 					res.status(500).json({ error: err.message });
 				} else {
-					if (results) {
-						if (results.password === hashpass) {
-							res.status(200).json({ message: 'login' });
-						} else {
-							res.sendStatus(401);
-						}
+					if (results && results.password === hashpass) {
+						res.status(200).json({ message: 'login' });
 					} else {
 						res.sendStatus(401);
 					}
 				}
 			});
-		}
+		});
 	}
 }
 
