@@ -1,10 +1,13 @@
 const User = require('../models/users.model');
 const sha1 = require('sha1');
+const getAccessToken = require('../utils/authentication/getAccessToken');
+
 const mongoError = require('../utils/error/mongoError');
 const createSuccess = require('../utils/success/createSuccess');
 const deleteSuccess = require('../utils/success/deleteSuccess');
 const updateSuccess = require('../utils/success/updateSuccess');
 const validatorResponse = require('../utils/validator/validatorResponse');
+
 const type = 'user';
 
 class UsersController {
@@ -65,6 +68,7 @@ class UsersController {
 
 	static login(req, res) {
 		validatorResponse(req, res, () => {
+			const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 			const pseudo = req.body.pseudo;
 			const hashpass = sha1(req.body.password);
 			User.findOne({ pseudo }, (err, results) => {
@@ -72,7 +76,10 @@ class UsersController {
 					res.status(500).json({ error: err.message });
 				} else {
 					if (results && results.password === hashpass) {
-						res.status(200).json({ message: 'login' });
+						let token = getAccessToken(results, ip);
+						res.status(200).json({
+							access_token: `Bearer ${token}`,
+						});
 					} else {
 						res.sendStatus(401);
 					}
