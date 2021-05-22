@@ -22,11 +22,13 @@ app.use(express.static('images'));
 const skills = require('./routes/skills');
 const projects = require('./routes/projects');
 const users = require('./routes/users');
+const upload = require('./routes/upload');
 
 // routes
 app.use('/skills', skills);
 app.use('/projects', projects);
 app.use('/users', users);
+app.use('/upload', upload);
 
 app.listen(PORT, function (err) {
 	if (err) {
