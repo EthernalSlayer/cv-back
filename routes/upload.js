@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 
+const checkAccessToken = require('../utils/authentication/checkAccessToken');
+
 // multer options
 let storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -14,7 +16,7 @@ let storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single('upload');
 
-router.post('/', (req, res) => {
+router.post('/', checkAccessToken, (req, res) => {
 	upload(req, res, (err) => {
 		if (err) {
 			res.status(500).json({ error: err.message });
